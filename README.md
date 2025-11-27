@@ -82,5 +82,23 @@ Remove uma tarefa permanentemente.
 * **Exemplo:** `/api/tarefas/1`
 * **Resposta (204 No Content):** Sem conteúdo no corpo da resposta.
 
+## Melhorias de Arquitetura (Tarefa 2)
+* **Service Layer:** Lógica de negócios separada do controlador.
+* **Bean Validation:** Validação de campos obrigatórios (`@NotBlank`).
+* **Global Exception Handling:** Tratamento centralizado de erros com `@ControllerAdvice`.
+
+### Versionamento (Tarefa 3)
+A API segue o padrão de versionamento por URL.
+* **Base URL:** `/api/v1/tarefas`
+
+### Tratamento de Erros (Tarefa 3)
+Respostas de erro seguem o padrão:
+```json
+{
+  "status": 404,
+  "message": "Tarefa não encontrada",
+  "timestamp": "2025-11-27T19:00:00"
+}
+
 ---
 **Autora:** Natália Maramaldo
