@@ -1,52 +1,40 @@
 package com.example.todolist.controller;
 
 import com.example.todolist.model.Tarefa;
-import com.example.todolist.repository.TarefaRepository;
+import com.example.todolist.service.TarefaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController 
-@RequestMapping("/api/tarefas") 
+@RestController
+@RequestMapping("/api/tarefas")
 public class TarefaController {
 
     @Autowired
-    private TarefaRepository tarefaRepository;
+    private TarefaService tarefaService;
 
-    // 1. LISTAR TAREFAS (GET)
     @GetMapping
-    public List<Tarefa> listarTarefas() {
-        return tarefaRepository.findAll();
+    public List<Tarefa> listar() {
+        return tarefaService.listarTodas();
     }
 
-    // 2. CRIAR TAREFA (POST)
     @PostMapping
-    public Tarefa criarTarefa(@RequestBody Tarefa tarefa) {
-        return tarefaRepository.save(tarefa);
+    public ResponseEntity<Tarefa> criar(@Valid @RequestBody Tarefa tarefa) {
+        return new ResponseEntity<>(tarefaService.criar(tarefa), HttpStatus.CREATED);
     }
 
-    // 3. ATUALIZAR TAREFA (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<Tarefa> atualizarTarefa(@PathVariable Long id, @RequestBody Tarefa dadosAtualizados) {
-        return tarefaRepository.findById(id)
-                .map(tarefa -> {
-                    tarefa.setTitulo(dadosAtualizados.getTitulo());
-                    tarefa.setDescricao(dadosAtualizados.getDescricao());
-                    tarefa.setConcluida(dadosAtualizados.isConcluida());
-                    Tarefa atualizada = tarefaRepository.save(tarefa);
-                    return ResponseEntity.ok().body(atualizada);
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Tarefa> atualizar(@PathVariable Long id, @Valid @RequestBody Tarefa tarefa) {
+        return ResponseEntity.ok(tarefaService.atualizar(id, tarefa));
     }
 
-    // 4. DELETAR TAREFA (DELETE)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarTarefa(@PathVariable Long id) {
-        return tarefaRepository.findById(id)
-                .map(tarefa -> {
-                    tarefaRepository.deleteById(id);
-                    return ResponseEntity.noContent().build();
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        tarefaService.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }
